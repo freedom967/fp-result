@@ -1,0 +1,1 @@
+# functional Option and Result type inspired by rust
