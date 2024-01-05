@@ -1,13 +1,13 @@
 import abc
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, NoReturn, TypeVar
+from typing import Any, Callable, Generic, NoReturn, TypeAlias, TypeVar
 
 T = TypeVar("T")
 E = TypeVar("E", str, Exception)
 MappedT = TypeVar("MappedT")
 
 
-class Result(abc.ABC, Generic[T]):
+class ResultBase(abc.ABC, Generic[T]):
     @classmethod
     def ok(cls, value: T) -> "Ok[T]":
         return Ok(value)
@@ -17,7 +17,7 @@ class Result(abc.ABC, Generic[T]):
         return Err(error)
 
     @abc.abstractmethod
-    def map(self, f: Callable[[T], MappedT]) -> "Result[MappedT]":
+    def map(self, f: Callable[[T], MappedT]) -> "ResultBase[MappedT]":
         pass
 
     @abc.abstractmethod
@@ -34,7 +34,7 @@ class Result(abc.ABC, Generic[T]):
 
 
 @dataclass
-class Ok(Result[T]):
+class Ok(ResultBase[T]):
     _data: T
 
     def __init__(self, value: T) -> None:
@@ -57,7 +57,7 @@ class Ok(Result[T]):
 
 
 @dataclass
-class Err(Result[Any]):
+class Err(ResultBase[Any]):
     _error: Exception
 
     def __init__(self, error: E) -> None:
@@ -77,3 +77,5 @@ class Err(Result[Any]):
 
     def is_ok(self) -> bool:
         return False
+
+Result:TypeAlias = Ok[T]|Err
