@@ -1,12 +1,12 @@
 import abc
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Generic, TypeAlias, TypeVar
 
 T = TypeVar("T")
 MappedT = TypeVar("MappedT")
 
 
-class Option(abc.ABC, Generic[T]):
+class OptionBase(abc.ABC, Generic[T]):
     @classmethod
     def some(cls, value: T) -> "Some[T]":
         return Some(value)
@@ -16,7 +16,7 @@ class Option(abc.ABC, Generic[T]):
         return NoneValue()
 
     @abc.abstractmethod
-    def map(self, f: Callable[[T], MappedT]) -> "Option[MappedT]":
+    def map(self, f: Callable[[T], MappedT]) -> "OptionBase[MappedT]":
         pass
 
     @abc.abstractmethod
@@ -24,7 +24,7 @@ class Option(abc.ABC, Generic[T]):
         pass
 
     @abc.abstractmethod
-    def expect(self,msg:str) -> T:
+    def expect(self, msg: str) -> T:
         pass
 
     @abc.abstractmethod
@@ -35,18 +35,19 @@ class Option(abc.ABC, Generic[T]):
     def is_none(self) -> bool:
         pass
 
+
 @dataclass
-class Some(Option[T]):
+class Some(OptionBase[T]):
     def __init__(self, value: T) -> None:
         self._value: T = value
 
-    def map(self, f: Callable[[T], MappedT]) -> Option[MappedT]:
+    def map(self, f: Callable[[T], MappedT]) -> OptionBase[MappedT]:
         return Some(f(self._value))
 
     def unwrap(self) -> T:
         return self._value
-    
-    def expect(self,msg:str) -> T:
+
+    def expect(self, msg: str) -> T:
         return self._value
 
     def __repr__(self) -> str:
@@ -58,15 +59,16 @@ class Some(Option[T]):
     def is_none(self) -> bool:
         return False
 
+
 @dataclass
-class NoneValue(Option[Any]):
-    def map(self, f: Callable[..., MappedT]) -> Option[MappedT]:
+class NoneValue(OptionBase[Any]):
+    def map(self, f: Callable[..., MappedT]) -> OptionBase[MappedT]:
         return self
 
     def unwrap(self):
         raise ValueError("unwrap on None")
-    
-    def expect(self,msg):
+
+    def expect(self, msg):
         raise ValueError(msg)
 
     def __eq__(self, __value: object) -> bool:
@@ -77,3 +79,6 @@ class NoneValue(Option[Any]):
 
     def is_none(self) -> bool:
         return True
+
+
+Option: TypeAlias = "Some[T]|NoneValue"

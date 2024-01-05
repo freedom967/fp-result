@@ -1,5 +1,3 @@
-
-
 from fp_result.option import NoneValue, Option, Some
 
 
