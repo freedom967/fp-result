@@ -2,7 +2,7 @@ import pytest
 from fp_result.result import Ok, Err, Result
 
 
-def some_result(input: int) -> Result[int, str]:
+def some_result(input: int) -> Result[int]:
     return Ok(input)
 
 

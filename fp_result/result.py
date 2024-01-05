@@ -7,7 +7,7 @@ E = TypeVar("E", str, Exception)
 MappedT = TypeVar("MappedT")
 
 
-class Result(abc.ABC, Generic[T, E]):
+class Result(abc.ABC, Generic[T]):
     @classmethod
     def ok(cls, value: T) -> "Ok[T]":
         return Ok(value)
@@ -17,7 +17,7 @@ class Result(abc.ABC, Generic[T, E]):
         return Err(error)
 
     @abc.abstractmethod
-    def map(self, f: Callable[[T], MappedT]) -> "Result[MappedT,E]":
+    def map(self, f: Callable[[T], MappedT]) -> "Result[MappedT]":
         pass
 
     @abc.abstractmethod
@@ -34,7 +34,7 @@ class Result(abc.ABC, Generic[T, E]):
 
 
 @dataclass
-class Ok(Result[T, Any]):
+class Ok(Result[T]):
     _data: T
 
     def __init__(self, value: T) -> None:
@@ -57,7 +57,7 @@ class Ok(Result[T, Any]):
 
 
 @dataclass
-class Err(Result[Any, E]):
+class Err(Result[Any]):
     _error: Exception
 
     def __init__(self, error: E) -> None:
