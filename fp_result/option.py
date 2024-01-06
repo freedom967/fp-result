@@ -81,4 +81,4 @@ class NoneValue(OptionBase[Any]):
         return True
 
 
-Option: TypeAlias = Some[T]|NoneValue
+Option: TypeAlias = Some[T] | NoneValue

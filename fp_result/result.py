@@ -78,4 +78,5 @@ class Err(ResultBase[Any]):
     def is_ok(self) -> bool:
         return False
 
-Result:TypeAlias = Ok[T]|Err
+
+Result: TypeAlias = Ok[T] | Err
