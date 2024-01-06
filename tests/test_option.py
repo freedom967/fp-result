@@ -7,11 +7,18 @@ def test_some():
     assert res == Some(2)
 
 
-def test_none():
-    def div(left: int, right: int) -> Option[float]:
-        if right == 0:
-            return NoneValue()
-        else:
-            return Some(left / right)
+def div(left: int, right: int) -> Option[float]:
+    if right == 0:
+        return NoneValue()
+    else:
+        return Some(left / right)
 
+
+def test_none():
     assert div(2, 0).is_none()
+
+
+def test_and_then():
+    some_a = Some(1)
+    res = some_a.and_then(lambda x: div(x, 0))
+    assert res.is_none()

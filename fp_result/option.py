@@ -20,6 +20,12 @@ class OptionBase(abc.ABC, Generic[T]):
         pass
 
     @abc.abstractmethod
+    def and_then(
+        self, f: Callable[[T], "OptionBase[MappedT]"]
+    ) -> "OptionBase[MappedT]":
+        pass
+
+    @abc.abstractmethod
     def unwrap(self) -> T:
         pass
 
@@ -44,6 +50,9 @@ class Some(OptionBase[T]):
     def map(self, f: Callable[[T], MappedT]) -> OptionBase[MappedT]:
         return Some(f(self._value))
 
+    def and_then(self, f: Callable[[T], OptionBase[MappedT]]) -> OptionBase[MappedT]:
+        return f(self._value)
+
     def unwrap(self) -> T:
         return self._value
 
@@ -67,6 +76,9 @@ class NoneValue(OptionBase[Any]):
 
     def unwrap(self):
         raise ValueError("unwrap on None")
+
+    def and_then(self, f: Callable[[Any], OptionBase[MappedT]]) -> OptionBase[MappedT]:
+        return self
 
     def expect(self, msg):
         raise ValueError(msg)
