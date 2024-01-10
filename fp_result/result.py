@@ -9,7 +9,7 @@ MappedT = TypeVar("MappedT")
 
 class Result(abc.ABC, Generic[T]):
     @classmethod
-    def ok(cls, value: T) -> "Ok[T]":
+    def Ok(cls, value: T) -> "Ok[T]":
         return Ok(value)
 
     @classmethod
