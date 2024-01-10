@@ -8,7 +8,7 @@ MappedT = TypeVar("MappedT")
 
 class Option(abc.ABC, Generic[T]):
     @classmethod
-    def some(cls, value: T) -> "Some[T]":
+    def Some(cls, value: T) -> "Some[T]":
         return Some(value)
 
     @classmethod
@@ -20,7 +20,7 @@ class Option(abc.ABC, Generic[T]):
         if data is None:
             return Option.NoneValue()
         else:
-            return Option.some(data)
+            return Option.Some(data)
 
     @abc.abstractmethod
     def map(self, f: Callable[[T], MappedT]) -> "Option[MappedT]":

@@ -36,4 +36,4 @@ def nullable() -> int | None:
 
 def test_from_nullable():
     v = Option.from_nullable(nullable())
-    assert v == Option.some(1)
+    assert v == Option.Some(1)
