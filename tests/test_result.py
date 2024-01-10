@@ -6,6 +6,8 @@ from fp_result.utils.exception_mapper import map_async_exception
 
 
 def some_result(input: int) -> Result[int]:
+    if input == 0:
+        return Err(ValueError("value is zero"))
     return Ok(input)
 
 
@@ -58,3 +60,19 @@ def test_map_async_exception():
 
     res = asyncio.run(async_maybe_exception(0))
     assert res.is_error()
+
+
+def div(left: int, right: int) -> Result[float]:
+    if right == 0:
+        return Err(ValueError("right side is zero"))
+    return Ok(left / right)
+
+
+def test_ok_and_then():
+    v = Ok(1).and_then(lambda x: div(x, 1))
+    assert v.is_ok()
+
+
+def test_err_and_then():
+    v = Ok(1).and_then(lambda x: div(x, 0))
+    assert v.is_error()

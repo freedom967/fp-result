@@ -21,6 +21,12 @@ class ResultBase(abc.ABC, Generic[T]):
         pass
 
     @abc.abstractmethod
+    def and_then(
+        self, f: Callable[[T], "ResultBase[MappedT]"]
+    ) -> "ResultBase[MappedT]":
+        pass
+
+    @abc.abstractmethod
     def unwrap(self) -> T:
         pass
 
@@ -42,6 +48,9 @@ class Ok(ResultBase[T]):
 
     def map(self, f: Callable[[T], MappedT]) -> "Ok[MappedT]":
         return Ok(f(self._data))
+
+    def and_then(self, f: Callable[[T], ResultBase[MappedT]]) -> ResultBase[MappedT]:
+        return f(self._data)
 
     def unwrap(self) -> T:
         return self._data
@@ -67,6 +76,9 @@ class Err(ResultBase[Any]):
             self._error = error
 
     def map(self, f: Callable) -> "Err":
+        return self
+
+    def and_then(self, f: Callable[[Any], ResultBase[MappedT]]) -> ResultBase[MappedT]:
         return self
 
     def unwrap(self) -> NoReturn:
