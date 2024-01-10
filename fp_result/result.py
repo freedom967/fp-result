@@ -13,7 +13,7 @@ class Result(abc.ABC, Generic[T]):
         return Ok(value)
 
     @classmethod
-    def err(cls, error: E) -> "Err":
+    def Err(cls, error: E) -> "Err":
         return Err(error)
 
     @abc.abstractmethod
