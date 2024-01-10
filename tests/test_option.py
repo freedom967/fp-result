@@ -22,3 +22,9 @@ def test_and_then():
     some_a = Some(1)
     res = some_a.and_then(lambda x: div(x, 0))
     assert res.is_none()
+
+
+def test_unwrap_or():
+    v = Option.NoneType()
+    out = v.unwrap_or(4)
+    assert out == 4

@@ -27,6 +27,12 @@ class Option(abc.ABC, Generic[T]):
     def unwrap(self) -> T:
         pass
 
+    def unwrap_or(self, new_value: T) -> T:
+        if isinstance(self, Some):
+            return self._value
+        else:
+            return new_value
+
     @abc.abstractmethod
     def expect(self, msg: str) -> T:
         pass
