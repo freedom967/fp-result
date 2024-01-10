@@ -1,12 +1,12 @@
 import abc
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, TypeAlias, TypeVar
+from typing import Any, Callable, Generic, TypeVar
 
 T = TypeVar("T")
 MappedT = TypeVar("MappedT")
 
 
-class OptionBase(abc.ABC, Generic[T]):
+class Option(abc.ABC, Generic[T]):
     @classmethod
     def some(cls, value: T) -> "Some[T]":
         return Some(value)
@@ -16,13 +16,11 @@ class OptionBase(abc.ABC, Generic[T]):
         return NoneValue()
 
     @abc.abstractmethod
-    def map(self, f: Callable[[T], MappedT]) -> "OptionBase[MappedT]":
+    def map(self, f: Callable[[T], MappedT]) -> "Option[MappedT]":
         pass
 
     @abc.abstractmethod
-    def and_then(
-        self, f: Callable[[T], "OptionBase[MappedT]"]
-    ) -> "OptionBase[MappedT]":
+    def and_then(self, f: Callable[[T], "Option[MappedT]"]) -> "Option[MappedT]":
         pass
 
     @abc.abstractmethod
@@ -43,14 +41,14 @@ class OptionBase(abc.ABC, Generic[T]):
 
 
 @dataclass
-class Some(OptionBase[T]):
+class Some(Option[T]):
     def __init__(self, value: T) -> None:
         self._value: T = value
 
-    def map(self, f: Callable[[T], MappedT]) -> OptionBase[MappedT]:
+    def map(self, f: Callable[[T], MappedT]) -> Option[MappedT]:
         return Some(f(self._value))
 
-    def and_then(self, f: Callable[[T], OptionBase[MappedT]]) -> OptionBase[MappedT]:
+    def and_then(self, f: Callable[[T], Option[MappedT]]) -> Option[MappedT]:
         return f(self._value)
 
     def unwrap(self) -> T:
@@ -70,14 +68,14 @@ class Some(OptionBase[T]):
 
 
 @dataclass
-class NoneValue(OptionBase[Any]):
-    def map(self, f: Callable[..., MappedT]) -> OptionBase[MappedT]:
+class NoneValue(Option[Any]):
+    def map(self, f: Callable[..., MappedT]) -> Option[MappedT]:
         return self
 
     def unwrap(self):
         raise ValueError("unwrap on None")
 
-    def and_then(self, f: Callable[[Any], OptionBase[MappedT]]) -> OptionBase[MappedT]:
+    def and_then(self, f: Callable[[Any], Option[MappedT]]) -> Option[MappedT]:
         return self
 
     def expect(self, msg):
@@ -91,6 +89,3 @@ class NoneValue(OptionBase[Any]):
 
     def is_none(self) -> bool:
         return True
-
-
-Option: TypeAlias = Some[T] | NoneValue
