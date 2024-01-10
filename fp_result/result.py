@@ -1,13 +1,13 @@
 import abc
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, NoReturn, TypeAlias, TypeVar
+from typing import Any, Callable, Generic, NoReturn, TypeVar
 
 T = TypeVar("T")
 E = TypeVar("E", str, Exception)
 MappedT = TypeVar("MappedT")
 
 
-class ResultBase(abc.ABC, Generic[T]):
+class Result(abc.ABC, Generic[T]):
     @classmethod
     def ok(cls, value: T) -> "Ok[T]":
         return Ok(value)
@@ -17,13 +17,11 @@ class ResultBase(abc.ABC, Generic[T]):
         return Err(error)
 
     @abc.abstractmethod
-    def map(self, f: Callable[[T], MappedT]) -> "ResultBase[MappedT]":
+    def map(self, f: Callable[[T], MappedT]) -> "Result[MappedT]":
         pass
 
     @abc.abstractmethod
-    def and_then(
-        self, f: Callable[[T], "ResultBase[MappedT]"]
-    ) -> "ResultBase[MappedT]":
+    def and_then(self, f: Callable[[T], "Result[MappedT]"]) -> "Result[MappedT]":
         pass
 
     @abc.abstractmethod
@@ -40,7 +38,7 @@ class ResultBase(abc.ABC, Generic[T]):
 
 
 @dataclass
-class Ok(ResultBase[T]):
+class Ok(Result[T]):
     _data: T
 
     def __init__(self, value: T) -> None:
@@ -49,7 +47,7 @@ class Ok(ResultBase[T]):
     def map(self, f: Callable[[T], MappedT]) -> "Ok[MappedT]":
         return Ok(f(self._data))
 
-    def and_then(self, f: Callable[[T], ResultBase[MappedT]]) -> ResultBase[MappedT]:
+    def and_then(self, f: Callable[[T], Result[MappedT]]) -> Result[MappedT]:
         return f(self._data)
 
     def unwrap(self) -> T:
@@ -66,7 +64,7 @@ class Ok(ResultBase[T]):
 
 
 @dataclass
-class Err(ResultBase[Any]):
+class Err(Result[Any]):
     _error: Exception
 
     def __init__(self, error: E) -> None:
@@ -78,7 +76,7 @@ class Err(ResultBase[Any]):
     def map(self, f: Callable) -> "Err":
         return self
 
-    def and_then(self, f: Callable[[Any], ResultBase[MappedT]]) -> ResultBase[MappedT]:
+    def and_then(self, f: Callable[[Any], Result[MappedT]]) -> Result[MappedT]:
         return self
 
     def unwrap(self) -> NoReturn:
@@ -89,6 +87,3 @@ class Err(ResultBase[Any]):
 
     def is_ok(self) -> bool:
         return False
-
-
-Result: TypeAlias = Ok[T] | Err
