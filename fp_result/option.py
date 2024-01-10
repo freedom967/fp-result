@@ -12,7 +12,7 @@ class Option(abc.ABC, Generic[T]):
         return Some(value)
 
     @classmethod
-    def NoneType(cls) -> "NoneValue":
+    def NoneValue(cls) -> "NoneValue":
         return NoneValue()
 
     @abc.abstractmethod

@@ -25,6 +25,6 @@ def test_and_then():
 
 
 def test_unwrap_or():
-    v = Option.NoneType()
+    v = Option.NoneValue()
     out = v.unwrap_or(4)
     assert out == 4
