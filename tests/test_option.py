@@ -28,3 +28,12 @@ def test_unwrap_or():
     v = Option.NoneValue()
     out = v.unwrap_or(4)
     assert out == 4
+
+
+def nullable() -> int | None:
+    return 1
+
+
+def test_from_nullable():
+    v = Option.from_nullable(nullable())
+    assert v == Option.some(1)

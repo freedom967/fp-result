@@ -15,6 +15,13 @@ class Option(abc.ABC, Generic[T]):
     def NoneValue(cls) -> "NoneValue":
         return NoneValue()
 
+    @classmethod
+    def from_nullable(cls, data: T | None) -> "Option[T]":
+        if data is None:
+            return Option.NoneValue()
+        else:
+            return Option.some(data)
+
     @abc.abstractmethod
     def map(self, f: Callable[[T], MappedT]) -> "Option[MappedT]":
         pass
